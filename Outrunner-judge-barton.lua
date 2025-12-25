@@ -12,7 +12,7 @@
 ---------------
 -- НАСТРОЙКИ
 -- Версия
-local ver = '3.3 beta 3'
+local ver = '3.3'
 
 -- режим карты (1 - для игры одним героем; 2 - для классической игры)
 local gmode = 1
@@ -26,8 +26,13 @@ local kr = 1.05
 -- коэффициент сложности (0.6-0.8 легко; 0.8-1 средне; >1 сложно) [страндарт = 0.92] parameters[1]
 local kef = 0.92
 
--- распольжение банки на жезлы
+-- расположение банки на жезлы по умолчанию (1 - ГО т1, 2 - Лавка т2, 3 - Лавка центра, 4 - Охрана у лавки, 5 - Сундук центра, 6 - Нет) [страндарт = 1] parameters[2]
 local banka = 1
+
+-- эксперементальный режим ограничения бафов (0 - отключён, 1 - включён)
+local smnsit = 0
+
+
 ----------------
 -- КОД ШАБЛОНА
 
@@ -89,7 +94,7 @@ function getScenarioVariables()
 		},			
 		{
 			name = 'SMNS_INFO_TURN',
-			value = 1,
+			value = smnsit,
 		},		
 	}
 end
@@ -280,8 +285,8 @@ local artZone34 = {'g001ig0174','g001ig0124','g000ig3019','g001ig0612','g001ig04
 --релики900-1500 +2100ворон: шкатулка800, Кираса резонанса, Тисовый лук, Длани ангела, Кафтан первооткрывателя, Шлем воителя, Кираса Кровавого Ворона
 local relZone34 = {'g001ig0156','g001ig0597','g001ig0539','g001ig0424','g001ig0425','g001ig0419','g002ig0015'}
 
---знамёна801-999: 
-local flagZone34 = {'g001ig0362','g001ig0364','g002ig0021','g001ig0357','g000ig1002','g001ig0358','g000ig1006','g001ig0374'}
+--знамёна801-1100: 
+local flagZone34 = {'g001ig0362','g001ig0364','g002ig0021','g001ig0357','g000ig1002','g001ig0358','g000ig1006','g001ig0374','g001ig0375','g001ig0359','g001ig0500','g002ig0003'}
 
 --сапоги1000: Сапоги путешественника / Сапоги родных земель
 local bootZone34 = {'g000ig8004','g001ig0606'}
@@ -294,8 +299,8 @@ local artZone5 = {'g001ig0155','g000ig2005','g001ig0411','g001ig0410','g002ig001
 --релики : плас.досп, кор.имп, тяж.латы, кор.мьолн, Доспех рыцаря Феникса
 local relZone5 = {'g001ig0116','g000ig7010','g001ig0038','g000ig3005','g002ig0012'}
 
---знамёна1000+: 
-local flagZone5 = {'g001ig0375','g001ig0359','g001ig0500','g002ig0003','g002ig0016','g001ig0360','g001ig0373'}
+--знамёна1200-1400: Знамя вампиризма / Знамя стойких / Стяг непреклонности / Стяг упырей / Штандарт равновесия
+local flagZone5 = {'g001ig0153','g001ig0052','g001ig0290','g001ig0360','g001ig0291'}
 
 --сапоги1100-1300: Железная поступь / Крылья ангела / Семимильные сапоги
 local bootZone5 = {'g001ig0115','g001ig0112','g000ig8005'}
@@ -748,8 +753,8 @@ return {
 				{ id = flagZone5[1], min = 1, max = 1 },
 				{ id = flagZone5[2], min = 1, max = 1 },
 
-				--доп. арт/релик/знамя
-				{ id = rnd(artZone5[3],relZone5[3],flagZone5[3]), min = 1, max = 1 },
+				--доп. арт/релик/знамя|Штандарт Бернинга
+				{ id = rnd(artZone5[3],relZone5[3],rnd(flagZone5[3],'g001ig0373')), min = 1, max = 1 }, -- 
 
 				--сферы
 				{ id = orbZone5[1], min = 1, max = 1 },
@@ -776,7 +781,7 @@ return {
 			}
 		},
 --		 guard = gmm({}, guard4()),
-		guard = gmm(guardbanka(4), guard3()),
+		guard = guardbanka(4),
 	},
 	}
 end
@@ -911,8 +916,8 @@ function zoneTownsResp0(playerRace)
 					-- Легкие сапоги / Литейные сапоги / Укрепленные сапоги | Гномьи сапоги / Сапоги ветров / Сапоги жизни / Сапоги каменщика
 					---{ id = rnd('g001ig0048','g000ig2001','g001ig0611','g000ig3001','g001ig0100','g001ig0110','g001ig0105','g001ig0113', rnd('g001ig0108','g001ig0107','g001ig0109','g001ig0106')), min = 1, max = 1 },
 					
-					-- Арты300 / Сапоги300
-					{id = rnd(artRespZ0[4],bootRespZ0[2]), min = 1, max = 1},
+					-- Арты300 / Арты300 / Сапоги300
+					{id = rnd(artRespZ0[4],artRespZ0[4],bootRespZ0[2]), min = 1, max = 1},
 					
 				}
 			}
@@ -1116,8 +1121,8 @@ return {
 		gold = { min = gmm(250,400), max = gmm(275,450)},
 		loot = {
 			items = {
-				-- знамёна400 + знамёна400 + сапоги300-500
-				{id = rnd(flagRespZ[3],flagRespZ[3],bootRespZ[2]), min = 1, max = 1},
+				-- знамёна400 + знамёна400 + знамёна400 + сапоги300-500
+				{id = rnd(flagRespZ[3],flagRespZ[3],flagRespZ[3],bootRespZ[2]), min = 1, max = 1},
 			},
 
 		},
@@ -1266,7 +1271,7 @@ return {
 		gold = { min = gmm(420,650), max = gmm(460,710)},
 		loot = {
 			items = {
-				{ id = flagZone5[4], min = 1, max = 1}, -- знамёна1000+
+				{ id = flagZone5[4], min = 1, max = 1}, -- знамёна1200+
 			},
 		},
 		guard = {
@@ -2473,7 +2478,7 @@ return {
 			-- { id = rnd(b15(),b15(),b15(),b15(),w15(),e2()), min = 1, max = 1 },
 			-- Зелье дуэлянта +20крит, Зелье похищения жизни +25вамп, Зелье тритоньей чешуи +вардурон, Эликсир жизненной силы +50максоз, Эликсир защиты от Оружия
 			{ id = rnd('g001ig0562','g001ig0491','g001ig0355','g001ig0127','g001ig0128'), min = 1, max = 1 },
-			{ id = fbanka(1), min = 1, max = 1 }, -- Зелье завоевателя (желы)
+			{ id = fbanka(5), min = 1, max = 1 }, -- Зелье завоевателя (желы)
 		}
 	}
 }
@@ -3474,10 +3479,10 @@ return { -- 350xp*1
 end
 
 function Pred1Resp01a()
-return { -- 400хп*2
+return { -- 350хп*2
 	subraceTypes = rsub(),
 	count = 1,
-	value = { min = vgmode2(400), max = vgmode2(400)*kr },
+	value = { min = vgmode2(350), max = vgmode2(350)*kr },
 	loot = {
 		items = {
 			{ id = 'g000ig0006', min = 1, max = 1 }, --хил100
@@ -3536,15 +3541,15 @@ return { -- 400xp*2 / свиток 200
 end
 
 function Pred1Resp1a()
-return { -- 450хп*2 
+return { -- 400хп*2 
 	subraceTypes = rsub(),
 	count = 1,
-	value = { min = vgmode2(450), max = vgmode2(450)*kr },
+	value = { min = vgmode2(400), max = vgmode2(400)*kr },
 	loot = {
 		items = {
-			{ id = 'g001ig0128', min = 1, max = 1 }, -- оружия
-			{ id = 'g001ig0378', min = 1, max = 1 }, --хил75
-			{ id = 'g001ig0481', min = 1, max = 1 }, -- мал. шар жизни
+			{ id = rnd('g000ig0001','g000ig0006'), min = 1, max = 1 }, --рес/хил100
+			{ id = rnd('g000ig0022','g000ig0023'), min = 1, max = 1 }, --воды/земли
+			{ id = 'g000ig0002', min = 1, max = 1 }, --защита15
 		}
 	}
 }
@@ -3556,19 +3561,19 @@ return { -- 450хп*2 --
 	value = { min = vgmode2(450), max = vgmode2(450)*kr },
 	loot = {
 		items = {
-			{ id = rnd('g000ig0001','g000ig0006'), min = 1, max = 1 }, --рес/хил100
-			{ id = rnd('g000ig0022','g000ig0023'), min = 1, max = 1 }, --воды/земли
-			{ id = 'g000ig0002', min = 1, max = 1 }, --защита15
+			{ id = 'g001ig0128', min = 1, max = 1 }, -- оружия
+			{ id = 'g000ig0006', min = 1, max = 1 }, --хил100
+			{ id = 'g001ig0481', min = 1, max = 1 }, -- мал. шар жизни
 		}
 	}
 }
 end
 
 function Pred1Resp2a()
-return { -- 500хп*2 -- свиток т1
+return { -- 450хп*2 -- свиток т1
 	subraceTypes = rsub(),
 	count = 1,
-	value = { min = vgmode2(500), max = vgmode2(500)*kr },
+	value = { min = vgmode2(450), max = vgmode2(450)*kr },
 	loot = {
 		itemTypes = { Item.Scroll },
 		value = { min = 200, max = 200 },
@@ -3674,10 +3679,10 @@ return { -- 550хп*1 -- посох 200
 end
 
 function Pred1RespD()
-return { -- 650хп*1 -- перк 600 / случ. пермо-эликсир на 5%
+return { -- 600хп*1 -- перк 600 / случ. пермо-эликсир на 5%
 	count = 1,
 	subraceTypes = NoUndead(),
-	value = { min = vgmode2(650), max = vgmode2(650)*kr },
+	value = { min = vgmode2(600), max = vgmode2(600)*kr },
 	loot = {
 		items = {
 			{ id = 'g000ig0001', min = 1, max = 1 }, --рес
@@ -3852,33 +3857,33 @@ return { -- 900хп*2 -- элексир буст 425-500
 }
 end
 function Pred1Zone3b()
-return { -- 900хп*2 -- пермо
+return { -- 900хп*2 -- свиток 450-650
 	subraceTypes = rsub(),
 	count = 1,
 	value = { min = vgmode3(900), max = vgmode3(900)*kr },
 	loot = {
+		itemTypes = { Item.Scroll },
+		value = { min = 450, max = 650 },
+		itemValue = { min = 450, max = 650 },
 		items = {
 			{ id = 'g000ig0006', min = 1, max = 1 }, --хил100
-			{ id = e4(), min = 1, max = 1 }, --эликсир400	
+			{ id = 'g000ig0003', min = 1, max = 1 }, --30защиты
 			{ id = 'g000ig0008', min = 1, max = 1 }, -- точность15			
-			{ id = pw6[3], min = 1, max = 1 }, -- пермо-вард-стихия		
 		}
 	}
 }
 end
 
 function Pred1Zone4a()
-return { -- 1000хп*2 -- сфера/свиток 450-650
+return { -- 1000хп*2 -- пермо
 	count = 1,
 	subraceTypes = NoUndead(),
 	value = { min = vgmode3(1000), max = vgmode3(1000)*kr },
 	loot = {
-		itemTypes = { Item.Scroll },
-		value = { min = 450, max = 650 },
-		itemValue = { min = 450, max = 650 },
 		items = {
 			orr({ id = 'g000ig0001', min = 1, max = 1 }, { id = 'g000ig0006', min = 1, max = 1 }), --рес/хил100
-			{ id = 'g000ig0003', min = 1, max = 1 }, --30защиты
+			{ id = e4(), min = 1, max = 1 }, --эликсир400	
+			{ id = pw6[3], min = 1, max = 1 }, -- пермо-вард-стихия		
 			orr({ id = 'g000ig0011', min = 1, max = 1 }, { id = 'g000ig0002', min = 1, max = 1 }), --15ини/защиты
 		}
 	}
@@ -3901,10 +3906,10 @@ return { -- 1000хп*2
 end
 
 function Pred1ZoneD()
-return { --1300хп*1 --свиток т3 + пермо
+return { --1200хп*1 --свиток т3 + пермо
 	count = 1,
 	subraceTypes = NoUndead(),
-	value = { min = vgmode3(1300), max = vgmode3(1300)*kr },
+	value = { min = vgmode3(1100), max = vgmode3(1100)*kr },
 	loot = {
 		itemTypes = { Item.Scroll },
 		value = { min = 550, max = 550 },
@@ -4099,10 +4104,10 @@ return { -- e4
 end
 
 function Pred1Zone5D()
-return { --2000хп*1 -- пермо700-800
+return { --1800хп*1 -- пермо700-800
 	count = 1,
 	subraceTypes = NoUndead(),
-	value = { min = 2000*kef, max = 2100*kef },
+	value = { min = 1800*kef, max = 2100*kef },
 	loot = {
 		items = {
 			{ id = 'g000ig0001', min = 1, max = 1 }, --рес
@@ -4328,7 +4333,7 @@ return {
 			{ id = w15(), min = 1, max = 1 }, -- случ. банка вард
 			{ id = rnd(restx,resty), min = 1, max = 1}, -- пермо200+ / пермо-вард-эффект-дот
 
-			{ id = fbanka(5), min = 1, max = 1 }, -- Зелье завоевателя (желы)
+			{ id = fbanka(1), min = 1, max = 1 }, -- Зелье завоевателя (желы)
 		}
 	}
 }
@@ -4342,7 +4347,7 @@ local getraceldr = rldr
 return {
 	--subraceTypes = { Subrace.NeutralDragon, Subrace.Human, Subrace.Heretic, Subrace.Dwarf, Subrace.Elf }, -- Subrace.Undead, убрал
 	subraceTypes = getraceldr, -- раса отряда лидера
-	value = { min = 1450*kef, max = 1550*kef }, 
+	value = { min = 1350*kef, max = 1420*kef }, 
 	leaderIds = goldr24,
 	-- сопротивляемость ворам -10
 	leaderModifiers = {'g201um9131'},
@@ -4405,12 +4410,12 @@ function zoneGuardZoneR()
 
 -- Награда за ГО т3-тренер
 
--- Знамя вампиризма / Знамя войны / Знамя Здоровья / Знамя стойких / Знамя стойкости / Стяг багровых рек / Стяг непреклонности / Штандарт равновесия (эти знамёна только тут)
+-- Знамя войны / Знамя Здоровья / Знамя стойкости / Стяг багровых рек / Стяг Кровавого Ворона
 -- / Гравированная диадема / Боевая коса (только тут) / Коготь Пожирателя / Кольцо Несгибаемого стража / Копье Ангела / Кама Кровавого Ворона / Кольцо веков (только тут)
--- / Корона Империи (Реликвия) / Тяжелые латы (Реликвия) / Доспех рыцаря Феникса (Реликвия) / Меч рыцаря Феникса (Артефакт) / Щит рыцаря Феникса (Артефакт) / Кираса Кровавого Ворона (Реликвия) / Серп Кровавого Ворона (Артефакт) / Стяг Кровавого Ворона
-local itemGuardZoneR = {'g001ig0153','g000ig1016','g000ig1017','g001ig0052','g000ig1015','g001ig0366','g001ig0290','g001ig0291',
+-- / Корона Империи (Реликвия) / Тяжелые латы (Реликвия) / Доспех рыцаря Феникса (Реликвия) / Меч рыцаря Феникса (Артефакт) / Щит рыцаря Феникса (Артефакт) / Кираса Кровавого Ворона (Реликвия) / Серп Кровавого Ворона (Артефакт) 
+local itemGuardZoneR = {'g000ig1016','g000ig1017','g000ig1015','g001ig0366','g002ig0016',
 'g000ig2005','g001ig0179','g001ig0102','g001ig0488','g002ig0017','g002ig0014','g000ig3006', 
-'g000ig7010','g001ig0038','g002ig0012','g002ig0010','g002ig0011','g002ig0015','g002ig0013','g002ig0016'}
+'g000ig7010','g001ig0038','g002ig0012','g002ig0010','g002ig0011','g002ig0015','g002ig0013'}
 
 mix(itemGuardZoneR)
 
@@ -4487,7 +4492,7 @@ function getPlayerZone00(zoneId, playerRace, zoneSize)
 						{ id = 'g001ig0125', min = 1, max = 1 }, -- разума
 						{ id = 'g001ig0036', min = 1, max = 1 }, -- смерти
 						{ id = rnd('g001ig0125','g001ig0036'), min = 1, max = 1 }, --разума/смерти
-
+			
 						{ id = rnd('g001ig0127','g001ig0128','g001ig0355'), min = 1, max = 1}, -- Эликсир жизненной силы +50оз / вард оружия / Зелье тритоньей чешуи
 
 						-- сфера
@@ -4800,6 +4805,10 @@ local connections = {
 --	{from = 0, to = 4, size = 0},
 --	{from = 8, to = 4, size = 0},
 
+	-- минизоны в центр
+--	{from = 13, to = 4},
+--	{from = 14, to = 4},
+
 }
 	if smode == 2 or smode == 3 then
 		local zones = {
@@ -4869,18 +4878,18 @@ template = {
             step = 5,
 			default = 100, 
 		},	
-		gmm({
+		{
 			name = 'Банка на жезлы', -- parameters[2]
 			values = {
-				'Сундук центра', --fbanka(1)
+				'ГО т1', -- fbanka(1)
 				'Лавка т2', -- banka2go(2,..)
 				'Лавка центра', -- fbanka(3)
 				'Охрана у лавки', -- guardbanka(4)
-				'ГО т1', -- fbanka(5)
+				'Сундук центра', --fbanka(5)
 				'Нет',
 			},
 			default = banka
-		},''),
+		},
 	},
 
 -- Исключения юнитов
@@ -5108,10 +5117,7 @@ forbiddenItems = {
 'g000ig1011', --сапоги мореплавания
 'g001ig0044', --Сердце океана (Артефакт)
 
---'g001ig0153', --Знамя вампиризма 25%
---'g001ig0366', --Стяг багровых рек вампиризма 25% + вард тауматургии
 'g001ig0154', -- знамя поглощения--50%
-'g001ig0373', -- Знамя магического иммунитета
 
 'g000ig5027', --свиток мореплавания
 'g000ig5006', --Свиток "Ускорение"--
