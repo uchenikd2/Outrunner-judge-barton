@@ -12,7 +12,7 @@
 ---------------
 -- НАСТРОЙКИ
 -- Версия
-local ver = '3.4'
+local ver = '3.4b'
 
 -- режим карты (1 - для игры одним героем; 2 - для классической игры) parameters[1]
 
@@ -5064,12 +5064,12 @@ end
 function getZones(races)
 	local zones = {}
 
-	local z910 = 3.8 -- 3.8 -- 4 -- тренер 50
-	local z08 = 5.2 -- 5.2 -- 5 -- т0 стольня 50
-	local z17 = 5.6 -- 5.6 -- 6 -- т1 60
-	local z26 = 9.2 -- 9.2 -- 9 -- т2 90
-	local z35 = 8.2 -- 8.2 -- 8 -- т3 82
-	local z4 = 11.6 -- 11.6 -- 12 -- центр 120 /G/ 110 = gmm(12,11)
+	local z910 = 4 -- 3.8 -- 4 -- тренер 50
+	local z08 = 5 -- 5.2 -- 5 -- т0 стольня 50
+	local z17 = 5 -- 5.6 -- 6 -- т1 60
+	local z26 = 8 -- 9.2 -- 9 -- т2 90
+	local z35 = 7 -- 8.2 -- 8 -- т3 82
+	local z4 = 12 -- 11.6 -- 12 -- центр 120 /G/ 110 = gmm(12,11)
 	local zh = 2.4 -- 2.4 -- минизоны
 	
 	-- перемешать таблицу предметов на опыт для лавок т2
@@ -5192,20 +5192,20 @@ function getZoneConnections(races,ban,art1,art2,tom,bot)
 local connections = {
 
 	-- т1 в центр
-	{from = 1, to = 4, size = 2, guard = zoneGuardZone00(p03rest1[1],pw4rest1[1],tp0prest1[1])},
-	{from = 7, to = 4, size = 2, guard = zoneGuardZone00(p03rest2[1],pw4rest2[1],tp0prest2[1])},
+	{from = 1, to = 4, size = 1, guard = zoneGuardZone00(p03rest1[1],pw4rest1[1],tp0prest1[1])},
+	{from = 7, to = 4, size = 1, guard = zoneGuardZone00(p03rest2[1],pw4rest2[1],tp0prest2[1])},
 
 	-- т2 в центр
-	{from = 2, to = 4, size = 2, guard = zoneGuardZone0(p04rest1[1],pw4rest1[2])},
-	{from = 6, to = 4, size = 2, guard = zoneGuardZone0(p04rest2[1],pw4rest2[2])},
+	{from = 2, to = 4, size = 1, guard = zoneGuardZone0(p04rest1[1],pw4rest1[2])},
+	{from = 6, to = 4, size = 1, guard = zoneGuardZone0(p04rest2[1],pw4rest2[2])},
 
 	-- т3 в центр
-	{from = 3, to = 4, size = 2, guard = zoneGuardZone(p05rest1[1],pw6rest1[1])},
-	{from = 5, to = 4, size = 2, guard = zoneGuardZone(p05rest2[1],pw6rest2[1])},
+	{from = 3, to = 4, size = 1, guard = zoneGuardZone(p05rest1[1],pw6rest1[1])},
+	{from = 5, to = 4, size = 1, guard = zoneGuardZone(p05rest2[1],pw6rest2[1])},
 
 	-- тренер т3_соперника
-	{from = 3, to = 9, size = 2, guard = zoneGuardZoneR()},
-	{from = 5, to = 10, size = 2, guard = zoneGuardZoneR()},
+	{from = 3, to = 9, size = 1, guard = zoneGuardZoneR()},
+	{from = 5, to = 10, size = 1, guard = zoneGuardZoneR()},
 
 	-- зоны игрок1 т0-т3
 	{from = 0, to = 1, size = 2, distance = rnd(1,2)}, {from = 0, to = 1, size = 2, distance = rnd(1,2)}, {from = 0, to = 1, guard = gmm('',zoneStacksP01(races[2])), size = 2, distance = rnd(1,2)},
@@ -5310,7 +5310,7 @@ template = {
 			gmm('Outrunner-judge-barton '..ver, 'Outcross-judge-barton '..ver),
 			gmm('Outrunner '..ver, 'Outcross '..ver)
 	),
-	description = gmm('Схема: черная зона в центре, ее должны касаться все, кроме темно-серых.\nМодификации: «Котовасия» - наем воинов всех рас (автор Criogen92); «Playmobs» - управление мобами в бою; «Точность +10%» - бонус игрокам.\nDiscord-сервер с шаблонами и картами: discord.gg/zBJZpwfbdW\nАвтор шаблона: Uchenik. Поддержите на карту Т-Банк: 2200700846776804\nХорошей игры!', 'Схема: черная зона в центре, ее должны касаться все, кроме темно-серых.\nМодификации: «Котовасия» - наем воинов всех рас (автор Criogen92); «Playmobs» - управление мобами в бою; «Точность +10%» - бонус игрокам.\nDiscord-сервер с шаблонами и картами: discord.gg/zBJZpwfbdW\nАвтор шаблона: Uchenik. Поддержите на карту Т-Банк: 2200700846776804\nХорошей игры!'),
+	description = gmm('Модификации: «Котовасия» - наем воинов всех рас (автор Criogen92); «Playmobs» - управление мобами в бою; «Точность +10%» - бонус игрокам.\nDiscord-сервер с шаблонами и картами: discord.gg/zBJZpwfbdW\nАвтор шаблона: Uchenik. Поддержите на карту Т-Банк: 2200700846776804\nХорошей игры!', 'Схема: черная зона в центре, ее должны касаться все, кроме темно-серых.\nМодификации: «Котовасия» - наем воинов всех рас (автор Criogen92); «Playmobs» - управление мобами в бою; «Точность +10%» - бонус игрокам.\nDiscord-сервер с шаблонами и картами: discord.gg/zBJZpwfbdW\nАвтор шаблона: Uchenik. Поддержите на карту Т-Банк: 2200700846776804\nХорошей игры!'),
 	minSize = 72,
 	maxSize = 72,
 	maxPlayers = smm(2, 3, 2),
