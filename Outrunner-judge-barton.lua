@@ -12,7 +12,7 @@
 ---------------
 -- НАСТРОЙКИ
 -- Версия
-local ver = '3.4b'
+local ver = '3.4c'
 
 -- режим карты (1 - для игры одним героем; 2 - для классической игры) parameters[1]
 
@@ -57,8 +57,11 @@ local t2var = {0,1,2}
 -- переменные на шанс предмтов на опыт в лавке т3 (1 из 2 = 50% шанс)
 local t3var = {0,1}
 
+-- переменная субрасы ГО по банке на перк
+local sldr = ''
+
 -- переменная расы ГО по банке на перк
-local rldr = ''
+--local rldr = ''
 
 -- переменная для имени лидера
 --local nldr = ''; -- не использую
@@ -804,8 +807,8 @@ return {
 				{ id = flagResp1[1], min = 1, max = 1 },
 				{ id = flagResp1[2], min = 1, max = 1 },
 
-				--доп. арт/арт/релик/знамя
-				{ id = rnd(artResp1[3],artResp1[3],relResp1[3],flagResp1[3]), min = 1, max = 1 },
+				--доп. арт/арт/релик/знамя/знамя
+				{ id = rnd(artResp1[3],artResp1[3],relResp1[3],flagResp1[3],flagResp1[3]), min = 1, max = 1 },
 
 				--сферы
 				{ id = orb400RespZ[2], min = 1, max = 1 },
@@ -881,8 +884,8 @@ return {
 				{ id = flagResp1[4], min = 1, max = 1 },
 				{ id = flagResp1[5], min = 1, max = 1 },
 
-				--доп. арт/арт/релик/знамя
-				{ id = rnd(artResp1[6],artResp1[6],relResp1[6],flagResp1[6]), min = 1, max = 1 },
+				--доп. арт/релик/релик/знамя/знамя
+				{ id = rnd(artResp1[6],relResp1[6],relResp1[6],flagResp1[6],flagResp1[6]), min = 1, max = 1 },
 
 				--сапоги
 				{ id = bootResp1[2], min = 1, max = 1 },
@@ -964,7 +967,6 @@ return {
 				--арты
 				{ id = artZone34[1], min = 1, max = 1 },
 				{ id = artZone34[2], min = 1, max = 1 },
-				{ id = artZone34[3], min = 1, max = 1 },
 
 				--релики
 				{ id = relZone34[1], min = 1, max = 1 },
@@ -974,8 +976,10 @@ return {
 				{ id = flagZone34[1], min = 1, max = 1 },
 				{ id = flagZone34[2], min = 1, max = 1 },
 
-				--доп. релик/знамя
-				{ id = rnd(relZone34[3],flagZone34[3]), min = 1, max = 1 },
+				--доп. арт/релик/знамя/знамя
+				{ id = rnd(artZone34[3],relZone34[3],flagZone34[3],flagZone34[3]), min = 1, max = 1 },
+				-- т5 арт/релик/знамя
+				{ id = rnd(rndx(artZone5),rndx(relZone5),rndx(flagZone5)), min = 1, max = 1 },
 
 				--сферы
 				{ id = orbZone34[1], min = 1, max = 1 },
@@ -1489,7 +1493,7 @@ end
 -- Руины т4
 
 function zoneRuinZone5()
-local valueRuinZone5 = { min = 1680*kef, max = 1760*kef }
+local valueRuinZone5 = { min = 1500*kef, max = 1600*kef } -- { min = 1680*kef, max = 1760*kef }
 return {
 	{
 		gold = { min = kotovasiaGold(gmm(420,650)), max = kotovasiaGold(gmm(460,710))},
@@ -2873,10 +2877,12 @@ function rndynldr(tabl)
 	table.remove(tabl, x)
 	if y == 'g001ig0528' or y == 'g001ig0526' or y == 'g001ig0525' then
 		--nldr = 'Хранитель искусств'
-		rldr = {Subrace.Human,Subrace.Dwarf,Subrace.NeutralHuman}
+		--rldr = {Subrace.Human,Subrace.Dwarf,Subrace.NeutralHuman}
+		sldr = 'hobo3'
 	elseif y == 'g001ig0527' or y == 'g001ig0531' or y == 'g001ig0529' then
 		--nldr = 'Хранитель тайн'
-		rldr = {Subrace.Heretic,Subrace.Elf,Subrace.NeutralElf,Subrace.NeutralGreenSkin,Subrace.NeutralMarsh,Subrace.NeutralBarbarian,Subrace.NeutralWolf,Subrace.NeutralWater}
+		--rldr = {Subrace.Heretic,Subrace.Elf,Subrace.NeutralElf,Subrace.NeutralGreenSkin,Subrace.NeutralMarsh,Subrace.NeutralBarbarian,Subrace.NeutralWolf,Subrace.NeutralWater}
+		sldr = 'hobo4'
 	end
 	return y
 end
@@ -2935,6 +2941,27 @@ function getPlayerSubRace(race)
 	elseif race == Race.Heretic then return Subrace.Heretic
 	elseif race == Race.Elf then return Subrace.Elf
 	end
+end
+
+-- земля игрока
+function getPlayerTerrain(race)
+	if race == Race.Human then return Terrain.Human
+	elseif race == Race.Dwarf then return Terrain.Dwarf
+	elseif race == Race.Undead then return Terrain.Undead
+	elseif race == Race.Heretic then return Terrain.Heretic
+	elseif race == Race.Elf then return Terrain.Elf
+	end
+end
+
+--фракционный вор
+function ldhrot(race)
+	if race == Race.Human then xldhero = 'g000uu0023'
+	elseif race == Race.Dwarf then xldhero = 'g000uu0048'
+	elseif race == Race.Undead then xldhero = 'g000uu0100'
+	elseif race == Race.Heretic then xldhero = 'g000uu0074'
+	elseif race == Race.Elf then xldhero = 'g000uu8013'
+	end
+	return xldhero
 end
 
 --фракционный лидер
@@ -3306,11 +3333,15 @@ return tStacksMini
 end
 
 -- отряды у тренера
-function PredSkinX(omin, omax, olmin, olmax)
+function PredSkinX(playerRace, omin, omax, olmin, olmax)
 return { -- 70 орк/cегаш, 90 череполом, 110 бутуз, 190! - палач 310! - людоед
 	count = 1,
-	subraceTypes = { Subrace.NeutralGreenSkin, Subrace.NeutralWolf, Subrace.Neutral },
+	subraceTypes = { getPlayerSubRace(playerRace) },
 	value = { min = omin*kef, max = omax*kef },
+	leaderIds = { ldhrot(playerRace) },
+	leaderModifiers = { -- список модификаторов лидера
+		'g000um9031','g000um9031','g000um9031','g000um9031','g000um9031', -- лидерство =5
+	},
 	loot = {
 		itemTypes = { Item.PotionHeal, Item.PotionRevive },
 		value = { min = olmin, max = olmax },
@@ -3321,6 +3352,7 @@ return { -- 70 орк/cегаш, 90 череполом, 110 бутуз, 190! - палач 310! - людоед
 	}
 }
 end
+
 
 -- отряды варвары
 function PredBarb(vmin, vmax, vlmin, vlmax, playerRaceX)
@@ -3340,6 +3372,67 @@ return {
 		}
 	}
 }
+end
+
+-- Фракционный отряд в зоне тренера -- было Охрана прохода тренен-центр фракционная --не использую! 
+function zoneGuardZoneT(playerRace,ban,art1,art2,tom,bot)
+local x0 = 0
+local x1 = 0
+local ZoneTt = {
+	count = 1,
+	subraceTypes = { getPlayerSubRace(playerRace), Subrace.Neutral, Subrace.NeutralHuman, Subrace.NeutralGreenSkin, Subrace.NeutralDragon, Subrace.NeutralMarsh, Subrace.NeutralBarbarian, Subrace.NeutralWolf }, 
+	value = { min = 1900*kef, max = 2000*kef },
+	leaderIds = ldhero(playerRace),
+	leaderModifiers = {
+		'g000um9031','g000um9031', -- лидерство +2=6
+		'g000um9001','g000um9001','g000um9001','g000um9001', -- хп 20!4=100%
+		'g000um9009','g000um9009','g000um9009','g000um9009','g000um9009','g000um9009','g000um9009','g000um9009', -- повреждения 10!8=100%
+		'g201um9130','g201um9130','g201um9130', -- сопрот.ворам 10!3=30
+		'g070um0058', -- сопрот.удар.магии 30 (Протектор III)
+		'g070um0345', -- дебафы -50% (Подавление проклятий III)
+	},
+	equipment = {
+		battle1 = rnd('g001ig0443','g000ig9021','g000ig9016','g001ig0203','g001ig0462','g001ig0183','g001ig0455','g001ig0131','g001ig0259','g000ig9128','g001ig0063','g000ig9116','g000ig0018','g000ig0018','g000ig0018','g000ig0018'), -- предмет в левый слот: сфера600-799(без урона вцель) / талика600-800x4 / хил200x4
+		battle2 = rnd('g000ig0006','g000ig0006','g000ig0006','g000ig0001'), -- хил100x3/рес
+	 },
+	loot = {
+		items = {
+			{ id = 'g000ig0001', min = 2, max = 2 },
+			{ id = 'g000ig0006', min = 2, max = 2 },
+			{ id = rnd(rmsb(),'g000ig7007'), min = 1, max = 1 }, --сл.большой шар/Алмаз350			
+		}
+	}
+}
+--.equipment
+repeat
+	x0 = math.random (0,1)
+	if x0 == 1 and x1~=3 then
+		ZoneTt.equipment.banner = ban
+		x1=x1+x0
+	end
+	x0 = math.random (0,1)
+	if x0 == 1 and x1~=3 then
+		ZoneTt.equipment.artifact1 = art1
+		x1=x1+x0
+	end
+	x0 = math.random (0,1)
+	if x0 == 1 and x1~=3 then
+		ZoneTt.equipment.artifact2 = art2
+		x1=x1+x0
+	end
+	x0 = math.random (0,1)
+	if x0 == 1 and x1~=3 then
+		ZoneTt.equipment.tome = tom
+		x1=x1+x0
+	end
+	x0 = math.random (0,1)
+	if x0 == 1 and x1~=3 then
+		ZoneTt.equipment.boots = bot
+		x1=x1+x0
+	end
+until x1==3
+
+return ZoneTt
 end
 
 --- Кастомные субрасы отряды-зленокожие-раса
@@ -3396,6 +3489,12 @@ function customSubraces()
             'g004uu5039', -- Снежный волк 115
             'g004uu8005', -- Гарм 190
 					
+		}},
+		{ uid = 'hobo2', name = 'Завоеватель', banner = 6, subraceUnits = {
+		}},
+		{ uid = 'hobo3', name = 'Хранитель искусств', banner = 17, subraceUnits = {
+		}},
+		{ uid = 'hobo4', name = 'Хранитель тайн', banner = 9, subraceUnits = {
 		}},
 	}
 end
@@ -4281,7 +4380,7 @@ function zoneStacksZone5a()
 return { -- 1100хп*3 --драги + оз50
 	subraceTypes = rsub(),
 	count = 1,
-	value = { min = 1100*kef, max = 1100*kef*kr},
+	value = { min = 1000*kef, max = 1000*kef*kr},
 	loot = {
 		items = {
 			{ id = 'g000ig0001', min = 1, max = 1 }, --рес
@@ -4297,7 +4396,7 @@ function zoneStacksZone5b()
 return { -- 1100хп*3 --драги + крит15
 	subraceTypes = rsub(),
 	count = 1,
-	value = { min = 1100*kef, max = 1100*kef*kr},
+	value = { min = 1000*kef, max = 1000*kef*kr},
 	loot = {
 		items = {
 			{ id = 'g000ig0006', min = 1, max = 1 }, --хил100
@@ -4313,7 +4412,7 @@ function zoneStacksZone5c()
 return { -- 1100хп*3 --вард.урон
 	subraceTypes = rsub(),
 	count = 1,
-	value = { min = 1100*kef, max = 1100*kef*kr},
+	value = { min = 1000*kef, max = 1000*kef*kr},
 	loot = {
 		items = {
 			orr({ id = 'g000ig0001', min = 1, max = 1 }, { id = 'g000ig0006', min = 1, max = 1 }), --рес/хил100
@@ -4331,7 +4430,7 @@ function zoneStacksZone501()
 return { -- 1200 шар
 	count = 1,
 	subraceTypes = NoUndead(),
-	value = { min = 1200*kef, max = 1200*kef*kr },
+	value = { min = 1100*kef, max = 1100*kef*kr },
 	loot = {
 		items = {
 			{ id = 'g000ig0001', min = 1, max = 1 }, --рес
@@ -4348,7 +4447,7 @@ function zoneStacksZone502()
 return { -- 1300 точн30 / сл.банка30 + 25вамп 
 	count = 1,
 	subraceTypes = NoUndead(),
-	value = { min = 1300*kef, max = 1300*kef*kr },
+	value = { min = 1200*kef, max = 1200*kef*kr },
 	loot = {
 		items = {
 			{ id = 'g000ig0001', min = 1, max = 1 }, --рес
@@ -4366,7 +4465,7 @@ function zoneStacksZone503()
 return { -- 1400 сл.банка30
 	count = 1,
 	subraceTypes = NoUndead(),
-	value = { min = 1400*kef, max = 1400*kef*kr },
+	value = { min = 1250*kef, max = 1250*kef*kr },
 	loot = {
 		items = {
 			orr({ id = 'g000ig0001', min = 1, max = 1 }, { id = 'g000ig0006', min = 1, max = 1 }), --рес/хил100
@@ -4384,7 +4483,7 @@ function Pred1Zone51()
 return { -- 1500 свиток
 	count = 1,
 	subraceTypes = NoUndead(),
-	value = { min = 1500*kef, max = 1500*kef*kr },
+	value = { min = 1350*kef, max = 1350*kef*kr },
 	loot = {
 		itemTypes = { Item.Scroll },
 		value = { min = 550, max = 550 },
@@ -4404,7 +4503,7 @@ function Pred1Zone52()
 return { -- 1500 сфера
 	count = 1,
 	subraceTypes = NoUndead(),
-	value = { min = 1500*kef, max = 1500*kef*kr },
+	value = { min = 1350*kef, max = 1350*kef*kr },
 	loot = {
 
 		items = {
@@ -4423,7 +4522,7 @@ function Pred1Zone53()
 return { -- 1600 талик
 	count = 1,
 	subraceTypes = NoUndead(),
-	value = { min = 1600*kef, max = 1600*kef*kr },
+	value = { min = 1450*kef, max = 1450*kef*kr },
 	loot = {
 		items = {
 			{ id = 'g000ig0006', min = 1, max = 1}, --хил100
@@ -4441,7 +4540,7 @@ function Pred1Zone54()
 return { -- 1600 пермо
 	count = 1,
 	subraceTypes = NoUndead(),
-	value = { min = 1600*kef, max = 1600*kef*kr },
+	value = { min = 1450*kef, max = 1450*kef*kr },
 	loot = {
 		items = {
 			{ id = 'g000ig0001', min = 1, max = 1 }, { id = 'g000ig0006', min = 1, max = 1 }, --рес/хил100
@@ -4459,7 +4558,7 @@ function Pred1Zone5D()
 return { --1800хп*1 -- пермо
 	count = 1,
 	subraceTypes = NoUndead(),
-	value = { min = 1800*kef, max = 2100*kef },
+	value = { min = 1600*kef, max = 1600*kef },
 	loot = {
 		items = {
 			{ id = 'g000ig0001', min = 1, max = 1 }, --рес
@@ -4669,12 +4768,14 @@ end
 
 -- Главная охрана проходпрохода между зонами 1-4
 function zoneGuardZone00(restx,resty,restz)
+if restz == 'g001ig0524' then getsubraceldr = 'hobo2' else getsubraceldr = Subrace.Neutral end
 return {
-	subraceTypes = {Subrace.Human, Subrace.Heretic, Subrace.Dwarf, Subrace.Elf, Subrace.Neutral, Subrace.NeutralHuman, Subrace.NeutralElf, Subrace.NeutralGreenSkin, Subrace.NeutralMarsh, Subrace.NeutralWater, Subrace.NeutralBarbarian, Subrace.NeutralWolf, Subrace.NeutralWater}, -- Subrace.Undead, Subrace.NeutralDragon,  убрал
+	subraceTypes = {Subrace.Human, Subrace.Heretic, Subrace.Dwarf, Subrace.Elf}, -- Subrace.Undead, Subrace.NeutralDragon,  убрал
 	value = { min = 630*kef, max = 660*kef }, 
 	leaderIds = goldr14,
 	-- сопротивляемость ворам -10
 	leaderModifiers = {'g201um9131'},
+	subrace = getsubraceldr,
 	loot = {
 		items = {
 			{ id = 'g000ig0001', min = 1, max = 1 },
@@ -4698,12 +4799,15 @@ end
 function zoneGuardZone0(restx,resty)
 local getperk = rndynldr(tp2p)
 --local getnameldr = nldr
-local getraceldr = rldr
+--local getraceldr = rldr
+local getsubraceldr = sldr
 return {
 	--subraceTypes = { Subrace.NeutralDragon, Subrace.Human, Subrace.Heretic, Subrace.Dwarf, Subrace.Elf }, -- Subrace.Undead, убрал
-	subraceTypes = getraceldr, -- раса отряда лидера
+	--subraceTypes = getraceldr, -- раса отряда лидера
+	subraceTypes = { Subrace.Human, Subrace.Heretic, Subrace.Dwarf, Subrace.Elf }, -- субрасы воинов отряда лидера
 	value = { min = 1050*kef, max = 1100*kef }, 
 	leaderIds = goldr24,
+	subrace = getsubraceldr,
 	-- сопротивляемость ворам -10
 	leaderModifiers = {'g201um9131'},
 	-- имя по банке на перк в луте
@@ -4730,12 +4834,15 @@ end
 function zoneGuardZone(restx,resty)
 local getperk = rndynldr(tp2p)
 --local getnameldr = nldr
-local getraceldr = rldr
+--local getraceldr = rldr
+local getsubraceldr = sldr
 return {
 	--subraceTypes = { Subrace.NeutralDragon, Subrace.Human, Subrace.Heretic, Subrace.Dwarf, Subrace.Elf }, -- Subrace.Undead, убрал
-	subraceTypes = getraceldr, -- раса отряда лидера
+	--subraceTypes = getraceldr, -- раса отряда лидера
+	subraceTypes = { Subrace.Human, Subrace.Heretic, Subrace.Dwarf, Subrace.Elf }, -- субрасы воинов отряда лидера
 	value = { min = 1600*kef, max = 1680*kef },
 	leaderIds = goldr34,
+	subrace = getsubraceldr,
 	-- сопротивляемость ворам -10
 	leaderModifiers = {'g201um9131'},
 	-- имя по банке на перк в луте
@@ -4795,68 +4902,6 @@ return {
 end
 
 --
--- Охрана прохода тренен-центр фракционная --не использую!
-function zoneGuardZoneT(playerRace,ban,art1,art2,tom,bot)
-local x0 = 0
-local x1 = 0
-local ZoneTt = {
-	subraceTypes = { getPlayerSubRace(playerRace), Subrace.Neutral, Subrace.NeutralHuman, Subrace.NeutralGreenSkin, Subrace.NeutralDragon, Subrace.NeutralMarsh, Subrace.NeutralBarbarian, Subrace.NeutralWolf }, 
-	value = { min = 1900*kef, max = 2000*kef },
-	leaderIds = ldhero(playerRace),
-	leaderModifiers = {
-		'g000um9031','g000um9031', -- лидерство +2=6
-		'g000um9001','g000um9001','g000um9001','g000um9001', -- хп 20!4=100%
-		'g000um9009','g000um9009','g000um9009','g000um9009','g000um9009','g000um9009','g000um9009','g000um9009', -- повреждения 10!8=100%
-		'g201um9130','g201um9130','g201um9130','g201um9130','g201um9130', -- сопрот.ворам 10!5=50
-		'g070um0058', -- сопрот.удар.магии 30 (Протектор III)
-		'g070um0345', -- дебафы -50% (Подавление проклятий III)
-	},
-	equipment = {
-		battle1 = rnd('g001ig0443','g000ig9021','g000ig9016','g001ig0203','g001ig0462','g001ig0183','g001ig0455','g001ig0131','g001ig0259','g000ig9128','g001ig0063','g000ig9116','g000ig0018','g000ig0018','g000ig0018','g000ig0018'), -- предмет в левый слот: сфера600-799(без урона вцель) / талика600-800x4 / хил200x4
-		battle2 = rnd('g000ig0006','g000ig0006','g000ig0006','g000ig0001'), -- хил100x3/рес
-	 },
-	loot = {
-		items = {
-			{ id = 'g000ig0001', min = 2, max = 2 },
-			{ id = 'g000ig0006', min = 2, max = 2 },
-			{ id = ruinTrainers2(), min = 1, max = 1 },
-			{ id = rnd(rmsb(),'g000ig7007'), min = 1, max = 1 }, --сл.большой шар/Алмаз350			
-		}
-	}
-}
-
---.equipment
-repeat
-	x0 = math.random (0,1)
-	if x0 == 1 and x1~=2 then
-		ZoneTt.equipment.banner = ban
-		x1=x1+x0
-	end
-	x0 = math.random (0,1)
-	if x0 == 1 and x1~=2 then
-		ZoneTt.equipment.artifact1 = art1
-		x1=x1+x0
-	end
-	x0 = math.random (0,1)
-	if x0 == 1 and x1~=2 then
-		ZoneTt.equipment.artifact2 = art2
-		x1=x1+x0
-	end
-	x0 = math.random (0,1)
-	if x0 == 1 and x1~=2 then
-		ZoneTt.equipment.tome = tom
-		x1=x1+x0
-	end
-	x0 = math.random (0,1)
-	if x0 == 1 and x1~=2 then
-		ZoneTt.equipment.boots = bot
-		x1=x1+x0
-	end
-until x1==2
-
-return ZoneTt
-end
-
 ----------------------
 
 
@@ -4871,7 +4916,10 @@ function getPlayerZone00(zoneId, playerRace, playerRaceX, zoneSize)
 		race = playerRace,
 		size = zoneSize,
 		label = 0,
+		fill = Fill.Mountain,
 		--border = Border.Open,
+		--terrainType = getPlayerTerrain(playerRace),
+		--terrain = 10,
 		mines = getMinesRespZ(playerRace),
 		merchants = zoneMerchRespZ0(),
 		ruins = zoneRuinRespZ0(),
@@ -5016,15 +5064,19 @@ end
 -- Вернет таблицу с описанием зоны-тренера
 function getTreasureZoneTrainers(zoneId, playerRace, zoneSizeTre)
 	return {
-		--border = Border.Water,
 		id = zoneId,
+		--border = Border.Water,
+		--terrainType = getPlayerTerrain(playerRace),
+		--terrain = 10,
 		ruins = zoneRuinTrainersCross(),
 		race = playerRace,
 		type = Zone.Junction,  -- Junction -- Treasure
 		size = zoneSizeTre,
 		mines = getMinesX(playerRace),
 		bags = bagsRespX(), -- криво генерит с сундуком!
-		stacks = { PredSkinX(13/kef, 25/kef, 0, 0), PredSkinX(26/kef, 32/kef, 50, 50), PredSkinX(40/kef, 55/kef, 100, 100), PredSkinX(60/kef, 70/kef, 150, 150) },
+		stacks = { PredSkinX(playerRace, 60/kef, 70/kef, 0, 0), PredSkinX(playerRace, 70/kef, 80/kef, 50, 50), PredSkinX(playerRace, 80/kef, 90/kef, 100, 100),
+			zoneGuardZoneT(playerRace,flagResp1[9],artResp1[10],artResp1[11],relResp1[9],bootResp1[4])		
+			},
 		trainers = {{ guard = gmm({}, PredSkin(90, 100, 100, 100)) }},
 	}
 end
@@ -5116,6 +5168,8 @@ function getZones(races)
 	p05rest1[1] = p05[5]
 	pw4rest1[1] = pw4[7] pw4rest1[2] = pw4[8]
 	pw6rest1[1] = pw6[5]
+	
+	-- было для переноса остатка наград в ГО1 - сейчас Не использую!!!
 	flagResp1rest1[1] = flagResp1[9]
 	artResp1rest1[1] = artResp1[10] artResp1rest1[2] = artResp1[11]
 	relResp1rest1[1] = relResp1[9]
@@ -5156,6 +5210,8 @@ function getZones(races)
 	p05rest2[1] = p05[5]
 	pw4rest2[1] = pw4[7] pw4rest2[2] = pw4[8]
 	pw6rest2[1] = pw6[5]
+
+	-- было для переноса остатка наград в ГО1 - сейчас Не использую!!!
 	flagResp1rest2[1] = flagResp1[9]
 	artResp1rest2[1] = artResp1[10] artResp1rest2[2] = artResp1[11]
 	relResp1rest2[1] = relResp1[9]
