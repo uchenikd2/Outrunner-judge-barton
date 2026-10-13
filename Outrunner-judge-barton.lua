@@ -12,7 +12,7 @@
 ---------------
 -- НАСТРОЙКИ
 -- Версия
-local ver = '3.4c'
+local ver = '3.4d'
 
 -- режим карты (1 - для игры одним героем; 2 - для классической игры) parameters[1]
 
@@ -29,6 +29,9 @@ local kef = 0.92
 
 -- банка на жезлы случайно
 local banka = math.random(1,4) -- не использую !!!
+
+-- банка на жезлы/релики/реген-точность в город/го1/лавке1
+local banka3 = {1,2,3}
 
 -- эксперементальный режим ограничения бафов (0 - отключён, 1 - включён)
 local smnsit = 0
@@ -365,13 +368,21 @@ function applyKotovasiaMines(mines, isStartZone)
 end
 ------
 
--- пермо для лавки т0 / т1 / города т1
+-- пермо для лавки т0 / т1 / города т1 - не использую!!!
 function gtp0p()
 	tp0p = {}
 	table.insert(tp0p, 'g001ig0530') -- Зелье посмертного зова (талики)
 	table.insert(tp0p, rnd(rnd('g001ig0026','g001ig0130'),'g000ig0010')) -- Аура регенерации | Эликсир регенерации / Эликсир внимательности 10точн 500
 	table.insert(tp0p, 'g001ig0524') -- Зелье завоевателя (желы)
 	mix(tp0p)
+end
+
+-- пермо для лавки т1 / города т1 / го т1
+function gtp0p2()
+	tp0p = {}
+	tp0p[banka3[1]] = 'g001ig0530' -- Зелье посмертного зова (талики)
+	tp0p[banka3[2]] = rnd(rnd('g001ig0026','g001ig0130'),'g000ig0010') -- Аура регенерации | Эликсир регенерации / Эликсир внимательности 10точн 500
+	tp0p[banka3[3]] = 'g001ig0524' -- Зелье завоевателя (желы)
 end
 
 
@@ -3337,7 +3348,7 @@ function PredSkinX(playerRace, omin, omax, olmin, olmax)
 return { -- 70 орк/cегаш, 90 череполом, 110 бутуз, 190! - палач 310! - людоед
 	count = 1,
 	subraceTypes = { getPlayerSubRace(playerRace) },
-	value = { min = omin*kef, max = omax*kef },
+	value = { min = omin, max = omax },
 	leaderIds = { ldhrot(playerRace) },
 	leaderModifiers = { -- список модификаторов лидера
 		'g000um9031','g000um9031','g000um9031','g000um9031','g000um9031', -- лидерство =5
@@ -3489,6 +3500,8 @@ function customSubraces()
             'g004uu5039', -- Снежный волк 115
             'g004uu8005', -- Гарм 190
 					
+		}},
+		{ uid = 'hobo1', name = 'Говорящий с призраками', banner = 19, subraceUnits = {
 		}},
 		{ uid = 'hobo2', name = 'Завоеватель', banner = 6, subraceUnits = {
 		}},
@@ -4768,7 +4781,13 @@ end
 
 -- Главная охрана проходпрохода между зонами 1-4
 function zoneGuardZone00(restx,resty,restz)
-if restz == 'g001ig0524' then getsubraceldr = 'hobo2' else getsubraceldr = Subrace.Neutral end
+	if restz == 'g001ig0530' then 
+		getsubraceldr = 'hobo1'
+	elseif restz == 'g001ig0524' then 
+		getsubraceldr = 'hobo2' 
+	else
+		getsubraceldr = Subrace.Neutral
+	end
 return {
 	subraceTypes = {Subrace.Human, Subrace.Heretic, Subrace.Dwarf, Subrace.Elf}, -- Subrace.Undead, Subrace.NeutralDragon,  убрал
 	value = { min = 630*kef, max = 660*kef }, 
@@ -5074,7 +5093,7 @@ function getTreasureZoneTrainers(zoneId, playerRace, zoneSizeTre)
 		size = zoneSizeTre,
 		mines = getMinesX(playerRace),
 		bags = bagsRespX(), -- криво генерит с сундуком!
-		stacks = { PredSkinX(playerRace, 60/kef, 70/kef, 0, 0), PredSkinX(playerRace, 70/kef, 80/kef, 50, 50), PredSkinX(playerRace, 80/kef, 90/kef, 100, 100),
+		stacks = { PredSkinX(playerRace, 41, 54, 0, 0), PredSkinX(playerRace, 54, 64, 50, 50), PredSkinX(playerRace, 64, 74, 100, 100), PredSkinX(playerRace, 74, 84, 150, 150),
 			zoneGuardZoneT(playerRace,flagResp1[9],artResp1[10],artResp1[11],relResp1[9],bootResp1[4])		
 			},
 		trainers = {{ guard = gmm({}, PredSkin(90, 100, 100, 100)) }},
@@ -5132,10 +5151,13 @@ function getZones(races)
 	mix(t2var)
 	-- перемешать таблицу выбора шанса размещения предметов на опыт в лавке т3 (50%)
 	mix(t3var)
+	-- перемешать вспомогательную для банок на перк т1
+	mix(banka3)
 	
 	-- ИГРОК1
 	gtal1() gtal2() gtal3() gtal4() gtal5()  -- [сброс т.таликов для игрока]
-	gtp0p() -- [сброс т.перков для игрока]
+	--gtp0p() -- [сброс т.перков для игрока]
+	gtp0p2() -- [сброс т.перков для игрока]
 	gts1p() -- [сброс т.свитков для игрока]
 
 	-- перемешать для 1 расы таблицу сфер т11
@@ -5162,7 +5184,7 @@ function getZones(races)
 	zones[4] = getTreasureZone34(3, races[1], races[2], z35) -- т3 белый 8(9)
 
 	-- перенос остатков предметов игрока 1 для ГО
-	tp0prest1[1] = tp0p[3]
+	--tp0prest1[1] = tp0p[3]
 	p03rest1[1] = p03[3]
 	p04rest1[1] = p04[3]
 	p05rest1[1] = p05[5]
@@ -5177,7 +5199,8 @@ function getZones(races)
 
 	-- ИГРОК2
 	gtal1() gtal2() gtal3() gtal4() gtal5()  -- [сброс т.таликов для игрока]
-	gtp0p() -- [сброс т.перков для лавок]
+	--gtp0p() -- [сброс т.перков для лавок]
+	gtp0p2() -- [сброс т.перков для игрока]
 	gts1p() -- [сброс т.свитков для игрока]	
 
 	-- перемешать для 2 расы таблицу сфер т11
@@ -5204,7 +5227,7 @@ function getZones(races)
 	zones[6] = getTreasureZone34(5, races[2], races[1], z35) -- т3 серый
 
 	-- перенос остатков предметов игрока 2 для ГО
-	tp0prest2[1] = tp0p[3]
+	--tp0prest2[1] = tp0p[3]
 	p03rest2[1] = p03[3]
 	p04rest2[1] = p04[3]
 	p05rest2[1] = p05[5]
@@ -5248,20 +5271,20 @@ function getZoneConnections(races,ban,art1,art2,tom,bot)
 local connections = {
 
 	-- т1 в центр
-	{from = 1, to = 4, size = 1, guard = zoneGuardZone00(p03rest1[1],pw4rest1[1],tp0prest1[1])},
-	{from = 7, to = 4, size = 1, guard = zoneGuardZone00(p03rest2[1],pw4rest2[1],tp0prest2[1])},
+	{from = 1, to = 4, size = 1, guard = zoneGuardZone00(p03rest1[1],pw4rest1[1],tp0p[3])}, -- ,tp0prest1[1])},
+	{from = 7, to = 4, size = 1, guard = zoneGuardZone00(p03rest2[1],pw4rest2[1],tp0p[3])}, -- ,tp0prest2[1])},
 
 	-- т2 в центр
 	{from = 2, to = 4, size = 1, guard = zoneGuardZone0(p04rest1[1],pw4rest1[2])},
 	{from = 6, to = 4, size = 1, guard = zoneGuardZone0(p04rest2[1],pw4rest2[2])},
 
 	-- т3 в центр
-	{from = 3, to = 4, size = 1, guard = zoneGuardZone(p05rest1[1],pw6rest1[1])},
-	{from = 5, to = 4, size = 1, guard = zoneGuardZone(p05rest2[1],pw6rest2[1])},
+	{from = 3, to = 4, size = 1, distance = 10, guard = zoneGuardZone(p05rest1[1],pw6rest1[1])},
+	{from = 5, to = 4, size = 1, distance = 10, guard = zoneGuardZone(p05rest2[1],pw6rest2[1])},
 
 	-- тренер т3_соперника
-	{from = 3, to = 9, size = 1, guard = zoneGuardZoneR()},
-	{from = 5, to = 10, size = 1, guard = zoneGuardZoneR()},
+	{from = 3, to = 9, size = 1, distance = 10, guard = zoneGuardZoneR()},
+	{from = 5, to = 10, size = 1, distance = 10, guard = zoneGuardZoneR()},
 
 	-- зоны игрок1 т0-т3
 	{from = 0, to = 1, size = 2, distance = rnd(1,2)}, {from = 0, to = 1, size = 2, distance = rnd(1,2)}, {from = 0, to = 1, guard = gmm('',zoneStacksP01(races[2])), size = 2, distance = rnd(1,2)},
