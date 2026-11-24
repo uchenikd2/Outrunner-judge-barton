@@ -12,7 +12,7 @@
 ---------------
 -- НАСТРОЙКИ
 -- Версия
-local ver = '3.4d'
+local ver = '3.4f'
 
 -- режим карты (1 - для игры одним героем; 2 - для классической игры) parameters[1]
 
@@ -3537,13 +3537,46 @@ end
 -- Отряды т0 респ
 ---------------------
 
-function zoneStacksRespZ00a(playerRaceX)
-return {  -- 165*3
+function zoneStacksRespZ00a0(playerRaceX)
+return {  -- 150
 	owner = playmobsOwner(playerRaceX),
 	leaderModifiers = playmobsModif(),
 	count = 1,
+	maxSlots = rnd(3,3,4),
+	subraceTypes = {Subrace.NeutralGreenSkin, Subrace.NeutralWolf, Subrace.NeutralMarsh},
+	value = { min = 150*kef, max = 150*kef*kr },
+	loot = {
+		items = {
+			{ id = 'g000ig0005', min = 1, max = 1 }, -- хил50
+			{ id = 'g001ig0180', min = 1, max = 1 }, -- хил25
+		}
+	}
+}
+end
+function zoneStacksRespZ00a1(playerRaceX)
+return {  -- 155
+	owner = playmobsOwner(playerRaceX),
+	leaderModifiers = playmobsModif(),
+	count = 1,
+	maxSlots = rnd(3,3,4),
+	subraceTypes = {Subrace.NeutralGreenSkin, Subrace.NeutralWolf, Subrace.NeutralMarsh},
+	value = { min = 155*kef, max = 155*kef*kr },
+	loot = {
+		items = {
+			{ id = 'g001ig0180', min = 1, max = 1 }, -- хил25
+			{ id = d15(), min = 1, max = 1 },
+		}
+	}
+}
+end
+function zoneStacksRespZ00a(playerRaceX)
+return {  -- 160
+	owner = playmobsOwner(playerRaceX),
+	leaderModifiers = playmobsModif(),
+	count = 1,
+	maxSlots = rnd(3,3,4),
 	subraceTypes = rsub(),
-	value = { min = 165*kef, max = 165*kef*kr },
+	value = { min = 160*kef, max = 160*kef*kr },
 	loot = {
 		items = {
 			{ id = 'g001ig0180', min = 1, max = 1 }, -- хил25
@@ -3553,10 +3586,11 @@ return {  -- 165*3
 }
 end
 function zoneStacksRespZ00b(playerRaceX)
-return {  -- 165*3
+return {  -- 165
 	owner = playmobsOwner(playerRaceX),
 	leaderModifiers = playmobsModif(),
 	count = 1,
+	maxSlots = rnd(3,3,4),
 	subraceTypes = rsub(),
 	value = { min = 165*kef, max = 165*kef*kr },
 	loot = {
@@ -3568,12 +3602,13 @@ return {  -- 165*3
 }
 end
 function zoneStacksRespZ00c(playerRaceX)
-return {  -- 165*3
+return {  -- 170
 	owner = playmobsOwner(playerRaceX),
 	leaderModifiers = playmobsModif(),
 	count = 1,
+	maxSlots = rnd(3,3,4),
 	subraceTypes = rsub(),
-	value = { min = 165*kef, max = 165*kef*kr },
+	value = { min = 170*kef, max = 170*kef*kr },
 	loot = {
 		items = {
 			{ id = torb11[2], min = 1, max = 1 }, -- Сфера 100 в цель
@@ -3584,12 +3619,13 @@ return {  -- 165*3
 end
 
 function zoneStacksRespZ001a(playerRaceX)
-return { -- 170*2
+return { -- 175
 	owner = playmobsOwner(playerRaceX),
 	leaderModifiers = playmobsModif(),
 	count = 1,
+	maxSlots = rnd(3,3,4),
 	subraceTypes = rsub(),
-	value = { min = 170*kef, max = 170*kef*kr },
+	value = { min = 175*kef, max = 175*kef*kr },
 	loot = {
 		items = {
 			{ id = 'g000ig0005', min = 1, max = 1 }, -- хил50
@@ -3599,12 +3635,13 @@ return { -- 170*2
 }
 end
 function zoneStacksRespZ001b(playerRaceX)
-return { -- 170*2
+return { -- 180
 	owner = playmobsOwner(playerRaceX),
 	leaderModifiers = playmobsModif(),
 	count = 1,
+	maxSlots = rnd(3,3,4),
 	subraceTypes = rsub(),
-	value = { min = 170*kef, max = 170*kef*kr },
+	value = { min = 180*kef, max = 180*kef*kr },
 	loot = {
 		itemTypes = { Item.Scroll },
 		value = { min = 140, max = 140 },
@@ -3617,12 +3654,13 @@ return { -- 170*2
 end
 
 function zoneStacksRespZ002a(playerRaceX)
-return { -- 175*2
+return { -- 185
 	owner = playmobsOwner(playerRaceX),
 	leaderModifiers = playmobsModif(),
 	count = 1,
+	maxSlots = rnd(3,3,4),
 	subraceTypes = rsub(),
-	value = { min = 175*kef, max = 175*kef*kr },
+	value = { min = 185*kef, max = 185*kef*kr },
 	loot = {
 		items = {
 			{ id = rndy(ttal1), min = 1, max = 1}, -- талик т1
@@ -3632,12 +3670,13 @@ return { -- 175*2
 }
 end
 function zoneStacksRespZ002b(playerRaceX)
-return { -- 175*2
+return { -- 190
 	owner = playmobsOwner(playerRaceX),
 	leaderModifiers = playmobsModif(),
 	count = 1,
+	maxSlots = rnd(3,3,4),
 	subraceTypes = rsub(),
-	value = { min = 175*kef, max = 175*kef*kr },
+	value = { min = 190*kef, max = 190*kef*kr },
 	loot = {
 		items = {
 			{ id = 'g001ig0378', min = 1, max = 1}, --хил75
@@ -3653,12 +3692,12 @@ end
 --------------
 
 function zoneStacksP01(playerRaceX)
-return { -- 190
+return { -- 180
 	owner = playmobsOwner(playerRaceX),
 	leaderModifiers = playmobsModif(),
 	count = 1,
 	subraceTypes = rsub(),
-	value = { min = 190*kef, max = 190*kef*kr },
+	value = { min = 180*kef, max = 180*kef*kr },
 	loot = {
 		items = {
 			orr({ id = 'g000ig0005', min = 2, max = 2 }, { id = 'g000ig0006', min = 1, max = 1 }), --2хил50/хил100
@@ -4943,7 +4982,7 @@ function getPlayerZone00(zoneId, playerRace, playerRaceX, zoneSize)
 		merchants = zoneMerchRespZ0(),
 		ruins = zoneRuinRespZ0(),
 		bags = bagsResp00(),
-		stacks = {zoneStacksRespZ00a(playerRaceX), zoneStacksRespZ00b(playerRaceX), zoneStacksRespZ00c(playerRaceX), zoneStacksRespZ001a(playerRaceX), zoneStacksRespZ001b(playerRaceX), zoneStacksRespZ002a(playerRaceX), zoneStacksRespZ002b(playerRaceX), PredSkin(130, 143, 100, 100,playerRaceX), PredSkin(140, 154, 100, 100,playerRaceX)},
+		stacks = {zoneStacksRespZ00a0(playerRaceX), zoneStacksRespZ00a1(playerRaceX), zoneStacksRespZ00a(playerRaceX), zoneStacksRespZ00b(playerRaceX), zoneStacksRespZ00c(playerRaceX), zoneStacksRespZ001a(playerRaceX), zoneStacksRespZ001b(playerRaceX), zoneStacksRespZ002a(playerRaceX), zoneStacksRespZ002b(playerRaceX)},
 
 		capital = {
 			buildings = getBuildings(playerRace),
